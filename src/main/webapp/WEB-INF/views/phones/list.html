@@ -27,14 +27,14 @@
         //tên API
         url: "/smartphones",
         //xử lý khi thành công
-        success: successHandler
+        success: successHandlerShowList
 
       });
       //chặn sự kiện mặc định của thẻ
       event.preventDefault();
     }
 
-    function successHandler() {
+    function successHandlerShowList() {
       $.ajax({
         type: "GET",
         //tên API
@@ -58,8 +58,32 @@
 
     function getSmartphone(smartphone) {
       return `<tr><td >${smartphone.producer}</td><td >${smartphone.model}</td><td >${smartphone.price}</td>` +
-              `<td><a class="deleteSmartphone" href="${smartphone.id}">Delete</a></td></tr>`;
+              `<td><a class="deleteSmartphone" href="${smartphone.id}">Delete</a></td>`+
+                `<td><a class="editSmartphone" href="${smartphone.id}">Edit</a></td></tr>`;
     }
+
+    $(document).ready(function () {
+      //sư kiện nào thực hiện Ajax
+      $('.deleteSmartphone').click(function (event) {
+        //lay du lieu
+        let a = $(this);
+        let smartphoneId = a.attr("href");
+        // goi ajax
+        $.ajax({
+          type: "DELETE",
+          //tên API
+          url: `/smartphones/${smartphoneId}`,
+          //xử lý khi thành công
+          success: function (data) {
+            a.parent().parent().remove();
+          }
+
+        });
+        //chặn sự kiện mặc định của thẻ
+        event.preventDefault();
+      });
+    })
+
   </script>
 </head>
 <body>
@@ -100,5 +124,6 @@
     </tr>
   </th:block>
 </table>
+</form>
 </body>
 </html>
