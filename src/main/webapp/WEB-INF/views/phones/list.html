@@ -46,6 +46,7 @@
                   '        <td>Producer</td>\n' +
                   '        <td>Model</td>\n' +
                   '        <td>Price</td>\n' +
+                  '        <td>Edit</td>\n' +
                   '        <td>Delete</td>\n' +
                   '    </tr>';
           for (let i = 0; i < data.length; i++) {
@@ -57,9 +58,9 @@
     }
 
     function getSmartphone(smartphone) {
-      return `<tr><td >${smartphone.producer}</td><td >${smartphone.model}</td><td >${smartphone.price}</td>` +
-              `<td><a class="deleteSmartphone" href="${smartphone.id}">Delete</a></td>`+
-                `<td><a class="editSmartphone" href="${smartphone.id}">Edit</a></td></tr>`;
+      return `<tr><td >${smartphone.producer}</td><td >${smartphone.model}</td><td >${smartphone.price}</td>
+              <td><a class="editSmartphone" href="${smartphone.id}">Edit</a></td></tr>
+              <td><a class="deleteSmartphone" href="${smartphone.id}">Delete</a></td>`;
     }
 
     $(document).ready(function () {
@@ -76,6 +77,29 @@
           //xử lý khi thành công
           success: function (data) {
             a.parent().parent().remove();
+          }
+
+        });
+        //chặn sự kiện mặc định của thẻ
+        event.preventDefault();
+      });
+
+      $('.editSmartphone').click(function (event) {
+        //lay du lieu
+        let a = $(this);
+        let smartphoneId = a.attr("href");
+        // goi ajax
+        $.ajax({
+          type: "GET",
+          //tên API
+          url: `/smartphones/${smartphoneId}`,
+          //xử lý khi thành công
+          success: function (data) {
+            let content = '<table> <tr> <td>Producer:</td> <td><input type="text" id="producer_edit" placeholder="producer"></td> </tr> ' +
+                    '<tr> <td>Model:</td> <td><input type="text" id="model_edit" placeholder="model"></td> </tr> ' +
+                    '<tr> <td>Price:</td> <td><input type="text" id="price_edit" placeholder="price"></td> </tr> ' +
+                    '<tr> <td></td> <td><input type="submit" value="Edit" onclick="addNewSmartPhone()"></td> </tr> </table>';
+            document.getElementById('edit-smartphone').innerHTML = content;
           }
 
         });
@@ -113,6 +137,7 @@
     <td>Producer</td>
     <td>Model</td>
     <td>Price</td>
+    <td>Edit</td>
     <td>Delete</td>
   </tr>
   <th:block th:each="smartphone: ${smartphones}">
@@ -120,10 +145,14 @@
       <td th:text="${smartphone.producer}"></td>
       <td th:text="${smartphone.model}"></td>
       <td th:text="${smartphone.price}"></td>
+      <td><a class="editSmartphone" th:href="${smartphone.getId()}">Edit</a></td>
       <td><a class="deleteSmartphone" th:href="${smartphone.getId()}">Delete</a></td>
     </tr>
   </th:block>
 </table>
+</form>
+<form id="edit-smartphone">
+
 </form>
 </body>
 </html>
